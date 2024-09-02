@@ -4,26 +4,33 @@ const bcrypt = require('bcrypt');
 const {DataTypes} = require('sequelize')
 const { sequelize} = require('../models/server');
 const { isValidPhoneNumber } = require('../config/utils/Validation');
-
+const upload = require('../config/utils/upload'); 
 
 db.users = require('../models/usersmodel')(sequelize,DataTypes)
 db.school = require('../models/schoolmodel')(sequelize,DataTypes);
 db.student=require('../models/studentmodel')(sequelize,DataTypes);
 db.company = require('../models/companymodel')(sequelize,DataTypes);
 
+const userRole = {
+    ADMIN:1,
+    SCHOOL:2,
+    STUDENT:3,
+    COMPANY:4
 
+};
 
 //for signup of school
 const signupSchool= async(req,res) => {
+   // console.log('sign up of school route')
+   console.log('File_info',req.file);
     const {user_id,
-           role,
            user_name,
            password,
            school_id,
            school_name,
            school_address,
            school_location,
-           school_logo} =req.body;
+           } =req.body;
 /*          console.log({user_id});
             console.log({role});
             console.log({user_name});
@@ -46,9 +53,12 @@ const signupSchool= async(req,res) => {
         else{
             const hashedPassword = await bcrypt.hash(password, 10);
 try{
+     const school_logo = `/uploads/${req.file.filename}`
+
+     console.log({school_logo});
             const user = await db.users.create(
                 {user_id : user_id, 
-                role: role, 
+                role: userRole.SCHOOL, 
                 user_name:user_name, 
                 password:hashedPassword})
 
@@ -81,20 +91,23 @@ try{
     }
 
 }
-
+//solve:the schoolid is not getting entered automatically in the student table from school table**********
 //for signup of student
 const signupStudent= async(req,res) => {
+
+   
     const {user_id,
-           role,
            user_name,
            password,
-           school_id,
+          
            student_id,
            student_name,
            student_course,
            student_phoneno,
-           student_schoolName} =req.body;
-            
+           } =req.body;
+     
+           
+
     try{
         
         if(!isValidPhoneNumber(student_phoneno)){
@@ -117,55 +130,33 @@ const signupStudent= async(req,res) => {
             try{ 
                 
                 const user = await db.users.create(
-                    {user_id : user_id,
-                     role: role, 
+                    {
+                     user_id : user_id,
+                     role: userRole.STUDENT, 
                      user_name:user_name, 
-                     password:hashedPassword})
+                     password:hashedPassword});
                 
                      console.log("user created");
 
-                     const school= await db.school.findOne({where: {school_name:student_schoolName}});
-                     
-               
-                    if(!school){const student = await db.student.create(
-                        {
-                        student_id: student_id,
-                        student_name:student_name,
-                        student_course:student_course,
-                        student_phoneno: student_phoneno,
-                        student_schoolName:student_schoolName,
-                        user_id: user.user_id,
-                        school_id:school_id,
-                        
-                    })
-                    //console.log("no school like this in school table");
-                    res.status(200).json({message: 'User created successfully.',
-                        user:user,
-                        student:student
-                    });
-                }
+                    
                 
-                if(school){
+                
                 const student = await db.student.create(
                         {
                         student_id: student_id,
                         student_name:student_name,
                         student_course:student_course,
                         student_phoneno: student_phoneno,
-                        student_schoolName:student_schoolName,
                         user_id: user.user_id,
-                        school_id: school.school_id,
+                        school_id: db.school.school_id,
                         
-                    })
+                    });
                     res.status(200).json({message: 'User created successfully.',
                         user:user,
                         student:student
                     });
-                } 
                 
-                
-            }
-           catch(error){
+            }catch(error){
                 console.log("Error creating user or student",error.message);
             }  
         }
@@ -177,13 +168,12 @@ const signupStudent= async(req,res) => {
              }
         res.status(500).json({message: 'Error creating user',error:error.message})
     }
+};
 
-}
 
 //for signup of company
 const signupCompany= async(req,res) => {
     const {user_id,
-        role,
         user_name,
         password,
         company_id, 
@@ -214,7 +204,7 @@ const signupCompany= async(req,res) => {
 
             const user = await db.users.create(
                 {user_id : user_id, 
-                role: role, 
+                role: userRole.COMPANY, 
                 user_name:user_name, 
                 password:hashedPassword})
             const company = await db.company.create(
@@ -243,3 +233,33 @@ const signupCompany= async(req,res) => {
 
 }
 module.exports = {signupSchool,signupStudent,signupCompany};
+
+
+/* 
+const express = require('express');
+const router = express.Router();
+const upload = require('./path/to/your/multer/config'); // Replace with the correct path to your multer config
+const YourModel = require('./path/to/your/model'); // Replace with the correct path to your Sequelize model
+
+router.post('/upload', upload.single('image'), async (req, res) => {
+  try {
+    // File is saved to 'uploads/' folder
+    const imageUrl = `/uploads/${req.file.filename}`;
+
+    // Save image URL to database
+    const record = await YourModel.create({ imageUrl });
+
+    res.status(201).json({
+      message: 'Image uploaded successfully',
+      imageUrl: imageUrl,
+      record: record
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+module.exports = router;
+
+
+*/

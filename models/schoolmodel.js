@@ -30,8 +30,8 @@
             allowNull: false,
         },
         school_logo:{
-            type:DataTypes.BLOB('long'),
-            allowNull:false,
+            type:DataTypes.STRING,
+            allowNull:true,
         },
       
       

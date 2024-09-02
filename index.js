@@ -22,7 +22,11 @@ app.use(bodyParser.json({ limit: '10mb' }));
 
 app.use('/api/users',require('./routes/signupRoutes'));
 app.use('/api/users',require('./routes/LoginRoutes'));
-
+app.use('/api/users',require('./routes/signupAccountDeleteRoutes'))
+app.use('/api/users',require('./routes/companyJobPostRoutes'));
+app.use('/api/users',require('./routes/jobViewRoutes'));
+app.use('/api/users',require('./routes/jobDeleteRoutes'));
+app.use('/api/users',require('./routes/jobDetailsUpdateRoutes'));
 
 const port = 5000;
 sequelize

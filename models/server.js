@@ -37,6 +37,7 @@ Object.keys(db).forEach(modelName => {
 }); */
 const dbConfig = require('../config/config.js');
 const {Sequelize, DataTypes} =require('sequelize');
+const poolConfig = dbConfig.pool  || {max:5,min:0, acquire:30000,idle:10000}
 
 const sequelize = new Sequelize(
   process.env.DB_NAME,
@@ -45,13 +46,7 @@ const sequelize = new Sequelize(
   {
       host: process.env.DB_HOST,
       dialect: process.env.DB_DIALECT,
-      pool: {
-          max: dbConfig.pool.max,
-          min: dbConfig.pool.min,
-          acquire: dbConfig.pool.acquire,
-          idle: dbConfig.pool.idle
-
-      },
+      pool: poolConfig,
       logging: false//process.env.NODE_ENV == "dev"
   }
 )
@@ -76,7 +71,7 @@ db.user = require('./usersmodel')(sequelize,DataTypes)
 db.school = require('./schoolmodel')(sequelize,DataTypes)
 db.student = require('./studentmodel')(sequelize,DataTypes)
 db.company = require('./companymodel')(sequelize,DataTypes)
-
+db.job = require('./jobmodel')(sequelize,DataTypes)
 
 db.user.hasMany(db.school, {
   foreignKey: 'user_id',
@@ -111,8 +106,27 @@ db.school.hasMany(db.student,{
   sourceKey : 'school_id',
 });
 db.student.belongsTo(db.school,{
-  foreignKey: 'school_id'
+  foreignKey: 'school_id',
 });
+
+
+ db.company.hasMany(db.job,{
+  foreignKey:'company_id',
+  sourceKey:'company_id',
+});
+db.job.belongsTo(db.company,{
+  foreignKey:'company_id',
+});
+
+
+db.company.hasMany(db.job,{
+  foreignKey:'company_name',
+  sourcekey:'company_name',
+});
+db.job.belongsTo(db.company,{
+  foreignKey:'company_name', 
+});
+
 
 db.sequelize.sync({ force: false })
     .then(() => {

@@ -1,6 +1,6 @@
 const db = require("../models/usersmodel");
 const bcrypt = require('bcrypt');
-//const { validateEmail } = require('./validater');
+
 const { validateEmail } = require('../config/utils/Validation');
 const { Buffer } = require('buffer');
 const { school, student } = require("../models/server");
@@ -17,6 +17,14 @@ const login = async (req, res) => {
  console.log("user agent",userAgent);
   const query = { where: {} };
   const authHeader = req.headers.authorization;
+  const userRole = {
+    ADMIN:1,
+    SCHOOL:2,
+    STUDENT:3,
+    COMPANY:4
+
+};
+  
   
   console.log({authHeader});
   if (!authHeader) {
@@ -38,7 +46,7 @@ const login = async (req, res) => {
       if (!user) {
       return res.status(200).json({ message: 'Invalid email or password.' });
       }
-      if (user.role === 1) {
+      if (user.role === userRole.ADMIN) {
         return res.status(403).json({ message: 'You do not have permission to access this route.' });
     }
       if (validateEmail(userlogin)) {
@@ -50,16 +58,16 @@ const login = async (req, res) => {
       }
       const user_id= user.user_id;
       const query1={ where: {user_id} };
-           if(user.role === 2){
+           if(user.role ===userRole.SCHOOL){
             
             const school = await db.school.findOne(query1);
             res.status(200).json({ message: 'Login successful.', user:user, school:school})
            }  
-          else if(user.role === 3){
+          else if(user.role ===userRole.STUDENT){
             const student = await db.student.findOne(query1);
             res.status(200).json({ message: 'Login successful.', user:user, student:student})
           }
-          else if(user.role === 4){
+          else if(user.role === userRole.COMPANY){
             const company = await db.company.findOne(query1);
             res.status(200).json({message: 'Login successful.',user:user, company:company})
           }

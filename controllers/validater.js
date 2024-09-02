@@ -27,4 +27,4 @@ const db = require("../models");
   
   
   
-module.exports= {validateEmail, addWishlistStatusToProduct,isValidPhoneNumber};
+module.exports= { addWishlistStatusToProduct};
