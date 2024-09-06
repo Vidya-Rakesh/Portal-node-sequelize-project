@@ -1,3 +1,6 @@
+//for company to view all the job details posted by the company
+
+
 const db = require ('../models/usersmodel');
 const bcrypt = require('bcrypt');
 const {DataTypes} = require('sequelize')

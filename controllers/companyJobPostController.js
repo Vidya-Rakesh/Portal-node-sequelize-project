@@ -68,35 +68,41 @@ const companyJobPost= async(req,res) => {
             const company_id= company? company.company_id: null;
             console.log({user_id});
             console.log({company_id});
-            const job= await db.job.create(
-                {   
-                    job_id:job_id,
-                    company_id:company_id,
-                    job_title:job_title,
-                    job_description: job_description, 
-                    job_location:job_location,
-                    employement_type:employement_type,
-                    salary_range:salary_range,
-                    experience_level:experience_level,
-                    application_deadline:application_deadline,
-                    job_status:job_status,
-                    job_industry:job_industry,
-                    job_skills:job_skills,
-                    education_required:education_required,
-                    contact_email:contact_email,
-                    no_of_openings:no_of_openings,
-                    link_to_apply:link_to_apply
-
-                }
-            )
-
-
-           
-           return res.status(200).json({message: 'Job posted successfully.',
-                job:job,
-                
+            try{
+                const job= await db.job.create(
+                    {   
+                        job_id:job_id,
+                        company_id:company_id,
+                        job_title:job_title,
+                        job_description: job_description, 
+                        job_location:job_location,
+                        employement_type:employement_type,
+                        salary_range:salary_range,
+                        experience_level:experience_level,
+                        application_deadline:application_deadline,
+                        job_status:job_status,
+                        job_industry:job_industry,
+                        job_skills:job_skills,
+                        education_required:education_required,
+                        contact_email:contact_email,
+                        no_of_openings:no_of_openings,
+                        link_to_apply:link_to_apply
+    
+                    }
+                )
+    
+    
                
-            });
+               return res.status(200).json({message: 'Job posted successfully.',
+                    job:job,
+                    
+                   
+                });
+            }catch(error){
+                if(error.name=== 'SequelizeDatabaseError')
+                    return res.status(400).json({message:`Only acceptable values for job status is 'active','inactive'`,error:error.message});
+            }
+            
         }
     }catch(error){
         if(error.name === 'SequelizeUniqueConstraintError')

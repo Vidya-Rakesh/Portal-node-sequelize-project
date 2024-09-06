@@ -32,8 +32,8 @@ module.exports = (sequelize, DataTypes) => {
         },
        
       company_logo: {
-        type:DataTypes.BLOB('long'),
-        allowNull:false,
+        type:DataTypes.STRING,
+        allowNull:true,
 
       },
       status:{

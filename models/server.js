@@ -72,6 +72,7 @@ db.school = require('./schoolmodel')(sequelize,DataTypes)
 db.student = require('./studentmodel')(sequelize,DataTypes)
 db.company = require('./companymodel')(sequelize,DataTypes)
 db.job = require('./jobmodel')(sequelize,DataTypes)
+db.usertoken = require('./usertokenmodel.js')(sequelize,DataTypes)
 
 db.user.hasMany(db.school, {
   foreignKey: 'user_id',
@@ -125,6 +126,15 @@ db.company.hasMany(db.job,{
 });
 db.job.belongsTo(db.company,{
   foreignKey:'company_name', 
+});
+
+db.user.hasMany(db.usertoken, {
+  foreignKey: 'user_id',
+  sourceKey: 'user_id',
+});
+db.usertoken.belongsTo(db.user, {
+  foreignKey: 'user_id',
+
 });
 
 

@@ -64,7 +64,7 @@ const jobDelete= async(req,res) => {
                     company_id:company_id,
                     job_id: job_id
 
-                }
+                },force:true
                })
 
            if(!job){

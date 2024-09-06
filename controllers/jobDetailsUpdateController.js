@@ -1,3 +1,5 @@
+//to handle the update of jobs(by company) posted by companies
+
 const db = require ('../models/usersmodel');
 const bcrypt = require('bcrypt');
 const {DataTypes} = require('sequelize')
@@ -99,10 +101,11 @@ const jobUpdate= async(req,res) => {
                  }
                });
                
-        // console.log({updatedJob});
+         console.log({updatedJob});
+         console.log({updatedRow});
            
-           return res.status(200).json({message: 'Job posted by company is updated.',
-                job:[updatedRow],
+           return res.status(200).json({message: 'Job posted by company is updated.',updatedJob
+                
                 });
 
         }

@@ -1,3 +1,6 @@
+//handles the login of any user who has an account
+
+
 const db = require("../models/usersmodel");
 const bcrypt = require('bcrypt');
 

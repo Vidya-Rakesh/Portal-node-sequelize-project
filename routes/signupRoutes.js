@@ -18,7 +18,7 @@ router.post('/signupSchool', upload.single('school_logo'), signupSchool);
 router.post('/signupStudent',signupStudent);
 
 //route for signup of companies
-router.post('/signupCompany',signupCompany);
+router.post('/signupCompany',upload.single('company_logo'),signupCompany);
 
 
 module.exports = router;
