@@ -9,5 +9,12 @@ function isValidPhoneNumber(phone) {
 function validateEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;//standard format
   return emailRegex.test(email);
+
 }
+//function validateEmail(email) {
+  
+  //const emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
+  //return emailRegex.test(email);
+  //this fn makes sure that there is only one .com 
+//}
 module.exports = {isValidPhoneNumber,validateEmail}

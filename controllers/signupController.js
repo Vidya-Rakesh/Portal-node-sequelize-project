@@ -2,26 +2,23 @@
 
 
 const bcrypt = require('bcrypt');
-const {DataTypes} = require('sequelize')
+const {Sequelize,DataTypes} = require('sequelize')
 const { sequelize} = require('../models/server');
 const { isValidPhoneNumber } = require('../config/utils/Validation');
 const { generateAccessToken } = require('../config/utils/auth');
 const upload = require('../config/utils/upload'); 
 
 
-const path = require('path');
-const db = require(path.join(__dirname, '..', 'models'));
-
-
-console.log("Trying to import models from ../models");
-//const db = require ('../models');
-//const db={}
+const db={}
 
 db.users = require('../models/usersmodel')(sequelize,DataTypes)
 db.school = require('../models/schoolmodel')(sequelize,DataTypes);
 db.student=require('../models/studentmodel')(sequelize,DataTypes);
 db.company = require('../models/companymodel')(sequelize,DataTypes);
-db.usertoken= require('../models/usertokenmodel')(sequelize,DataTypes);
+
+
+
+
 const userRole = {
     ADMIN:1,
     SCHOOL:2,
@@ -32,16 +29,16 @@ const userRole = {
 
 //for signup of school
 const signupSchool= async(req,res) => {
-   // console.log('sign up of school route')
-  // console.log('File_info',req.file);
+   
     const {user_id,
-           user_name,
            password,
            school_id,
            school_name,
            school_address,
            school_location,
            } =req.body;
+
+   const user_name=req.body.user_name.toLowerCase();
 /*          console.log({user_id});
             console.log({role});
             console.log({user_name});
@@ -67,12 +64,16 @@ try{
      const school_logo = `/uploads/${req.file.filename}`
      
      console.log({school_logo});
+
             const user = await db.users.create(
                 {user_id : user_id, 
                 role: userRole.SCHOOL, 
                 user_name:user_name, 
                 password:hashedPassword})
+           
             const tokens = await generateAccessToken(user);
+          
+                
            
            const school = await db.school.create(
                 {user_id : user.user_id,
@@ -86,7 +87,7 @@ try{
                 user:user,
                 school:school,
                 accessToken:tokens.accessToken,
-                refreshToken:tokens.RefreshToken
+                refreshToken:tokens.refreshToken
                });
 
           
@@ -110,7 +111,6 @@ const signupStudent= async(req,res) => {
 
    
     const {user_id,
-           user_name,
            password,
           school_id,
            student_id,
@@ -119,7 +119,7 @@ const signupStudent= async(req,res) => {
            student_phoneno,
            } =req.body;
      
-           
+          const user_name=req.body.user_name.toLowerCase();    
 
     try{
         
@@ -149,11 +149,10 @@ const signupStudent= async(req,res) => {
                      user_name:user_name, 
                      password:hashedPassword});
                      console.log("user created");
+
+                     
                 const tokens = await generateAccessToken(user);
                      
-
-                    
-                
                 
                 const student = await db.student.create(
                         {
@@ -169,7 +168,7 @@ const signupStudent= async(req,res) => {
                         user:user,
                         student:student,
                         accessToken:tokens.accessToken,
-                        refreshToken:tokens.RefreshToken,
+                        refreshToken:tokens.refreshToken,
                     });
                 
             }catch(error){
@@ -190,7 +189,6 @@ const signupStudent= async(req,res) => {
 //for signup of company
 const signupCompany= async(req,res) => {
     const {user_id,
-        user_name,
         password,
         company_id, 
         company_name,
@@ -199,7 +197,7 @@ const signupCompany= async(req,res) => {
         company_logo,
         status} =req.body;
 
-
+       const user_name=req.body.user_name.toLowerCase();
     try{
        
         const hasUserWithUsername = await db.users.count({ where: {user_name}})
@@ -242,7 +240,7 @@ res.status(200).json({message: 'User created successfully.',
     user:user,
     company:company, 
     accessToken:tokens.accessToken,
-    refreshToken:tokens.RefreshToken
+    refreshToken:tokens.refreshToken
      });
 }catch(error){
     if(error.name === 'SequelizeDatabaseError'){
@@ -264,5 +262,8 @@ res.status(200).json({message: 'User created successfully.',
 
 }
 module.exports = {signupSchool,signupStudent,signupCompany};
+
+
+
 
 

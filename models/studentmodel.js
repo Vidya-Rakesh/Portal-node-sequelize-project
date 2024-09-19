@@ -23,10 +23,14 @@ module.exports = (sequelize, DataTypes) => {
              },
            
         },
-        student_name:{
+        firstName:{
             type: DataTypes.STRING,
             allowNull: false,
         },
+       lastName:{
+          type: DataTypes.STRING,
+          allowNull: false,
+      },
         student_course:{
             type: DataTypes.STRING,
             allowNull: false,

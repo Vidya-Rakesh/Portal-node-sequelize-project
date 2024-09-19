@@ -4,12 +4,14 @@
 
   module.exports = (sequelize, DataTypes) => {
     const UserToken = sequelize.define('UserToken', {
-        usertoken_id:{
+        
+      usertoken_id:{
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true },
 
-            user_id: {
+            
+      user_id: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 references: {
@@ -18,7 +20,7 @@
                 }
              },
 
-        token: {
+      token: {
             type: DataTypes.STRING,
             allowNull: true
         },
@@ -33,5 +35,5 @@
         deletedAt: 'deleted_at', 
       });
   
-    return UserToken;
+   return UserToken;
   };

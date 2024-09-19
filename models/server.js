@@ -35,6 +35,7 @@ Object.keys(db).forEach(modelName => {
     db[modelName].associate(db);
   }
 }); */
+//const config = require('../config/config.js');
 const dbConfig = require('../config/config.js');
 const {Sequelize, DataTypes} =require('sequelize');
 const poolConfig = dbConfig.pool  || {max:5,min:0, acquire:30000,idle:10000}
@@ -73,6 +74,7 @@ db.student = require('./studentmodel')(sequelize,DataTypes)
 db.company = require('./companymodel')(sequelize,DataTypes)
 db.job = require('./jobmodel')(sequelize,DataTypes)
 db.usertoken = require('./usertokenmodel.js')(sequelize,DataTypes)
+db.loginAttempts = require('./loginAttemptsmodel.js')(sequelize,DataTypes)
 
 db.user.hasMany(db.school, {
   foreignKey: 'user_id',
@@ -120,13 +122,13 @@ db.job.belongsTo(db.company,{
 });
 
 
-db.company.hasMany(db.job,{
-  foreignKey:'company_name',
-  sourcekey:'company_name',
-});
-db.job.belongsTo(db.company,{
-  foreignKey:'company_name', 
-});
+//db.company.hasMany(db.job,{
+  //foreignKey:'company_name',
+ // sourcekey:'company_name',
+//});
+//db.job.belongsTo(db.company,{
+ // foreignKey:'company_name', 
+//});
 
 db.user.hasMany(db.usertoken, {
   foreignKey: 'user_id',
@@ -137,6 +139,14 @@ db.usertoken.belongsTo(db.user, {
 
 });
 
+db.user.hasMany(db.loginAttempts, {
+  foreignKey: 'user_id',
+  sourceKey: 'user_id',
+});
+db.loginAttempts.belongsTo(db.user, {
+  foreignKey: 'user_id',
+
+});
 
 db.sequelize.sync({ force: false })
     .then(() => {

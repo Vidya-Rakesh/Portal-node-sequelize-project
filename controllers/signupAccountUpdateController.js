@@ -463,8 +463,6 @@ const studentSignupUpdate = async (req,res) => {
     if(user.role === userRole.STUDENT){
 
         const {
-            user_name,
-            password,
 
             school_id,
             student_name,
@@ -473,7 +471,7 @@ const studentSignupUpdate = async (req,res) => {
             } =req.body;
 
 
-
+       
        
        const user_id =user.user_id;
         const currentStudent = await db.student.findOne({
